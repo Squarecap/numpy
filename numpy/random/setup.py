@@ -40,7 +40,29 @@ def configuration(parent_package='',top_path=None):
 
     libs = []
     # Configure mtrand
-    if '__pypy__' not in sys.builtin_module_names:
+    try:
+        import cffi
+        have_cffi = True
+    except ImportError:
+        have_cffi = False
+    if have_cffi:
+        #create the dll/so for the cffi version
+        config.add_installed_library('_mtrand',
+                         sources=[join('mtrand', x) for x in
+                                  ['randomkit.c', 'distributions.c']],
+                         install_dir = '.',
+                         build_info = {
+                             'libraries': libs,
+                             'depends': [join('mtrand', '*.h'),
+                                        ],
+                             'define_macros': defs,
+                            }
+                        )
+        config.add_extension('_mtrand',
+                         sources=[join('mtrand', x) for x in
+                                  ['randomkit.c', 'distributions.c']],
+                        )
+    else:
         config.add_extension('mtrand',
                          sources=[join('mtrand', x) for x in
                                   ['mtrand.c', 'randomkit.c', 'initarray.c',
