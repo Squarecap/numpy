@@ -1,7 +1,7 @@
 import numpy
 
 # translated from numpy/lib/src/_compiled_base.c
-def binary_search(key, arr, length):
+def _binary_search(key, arr, length):
     imin = 0
     imax = length
 
@@ -26,11 +26,13 @@ def interp(x, xp, fp, left=None, right=None):
     if lenxp != len(fp):
         raise ValueError("fp and xp are not of the same length.")
 
-    af = numpy.array(x, dtype=numpy.double)
-    ax = numpy.array(x, dtype=numpy.double)
-    axp = numpy.array(xp, dtype=numpy.double)
+    afp = numpy.array(fp, dtype=numpy.double, order='C', ndmin=1)
+    axp = numpy.array(xp, dtype=numpy.double, order='C', ndmin=1)
+    ax = numpy.array(x, dtype=numpy.double, order='C', ndmin=1)
 
-    dy = numpy.array(fp, dtype=numpy.double)
+    af = numpy.array(x, dtype=numpy.double)
+
+    dy = afp
     dx = axp
     dz = ax
     dres = af
@@ -45,7 +47,7 @@ def interp(x, xp, fp, left=None, right=None):
         rval = dy[-1]
 
     for i, el in enumerate(af):
-        j = binary_search(x[i], axp, lenxp)
+        j = _binary_search(dz[i], dx, lenxp)
 
         if (j == -1):
             dres[i] = lval
