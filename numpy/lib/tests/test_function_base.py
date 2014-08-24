@@ -1405,6 +1405,12 @@ class TestInterp(TestCase):
         fp = np.sin(xp)
         assert_almost_equal(np.interp(np.pi, xp, fp), 0.0)
 
+    def test_multiple_x_dimensions(self):
+        xp = [0, 1, 2, 3]
+        fp = [5, 6, 2, 1]
+        x = [[0, 1], [2, 3]]
+        assert_array_equal (np.interp(x, xp, fp), np.array([[ 5, 6], [2, 1]]))
+
 
 def compare_results(res, desired):
     for i in range(len(desired)):
